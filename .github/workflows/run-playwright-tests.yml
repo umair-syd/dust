@@ -78,7 +78,7 @@ jobs:
       - name: Post Failure Message to Slack
         id: slack-notification
         if: failure()
-        uses: slackapi/slack-github-action@v1.27.0
+        uses: slackapi/slack-github-action@485a9d42d3a73031f12ec201c457e2162c45d02d # v1.27.0
         with:
           payload: |
             {

@@ -55,7 +55,7 @@ runs:
     - name: Lookup by email
       if: inputs.step == 'start'
       id: email
-      uses: slackapi/slack-github-action@v2.0.0
+      uses: slackapi/slack-github-action@37ebaef184d7626c5f204ab8d3baff4262dd30f0 # v2.0.0
       with:
         errors: false
         method: users.lookupByEmail
@@ -78,7 +78,7 @@ runs:
     - name: Notify Build And Deploy Start
       if: inputs.step == 'start'
       id: start_notification
-      uses: slackapi/slack-github-action@v2.0.0
+      uses: slackapi/slack-github-action@37ebaef184d7626c5f204ab8d3baff4262dd30f0 # v2.0.0
       with:
         method: chat.postMessage
         token: ${{ inputs.slack_token }}
@@ -93,7 +93,7 @@ runs:
 
     - name: Notify Deploy Failure
       if: inputs.step == 'failure'
-      uses: slackapi/slack-github-action@v2.0.0
+      uses: slackapi/slack-github-action@37ebaef184d7626c5f204ab8d3baff4262dd30f0 # v2.0.0
       with:
         method: chat.postMessage
         token: ${{ inputs.slack_token }}

@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo 📚
-        uses: actions/checkout@v3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
       - name: Run `openapi` command 🚀
-        uses: readmeio/rdme@v8
+        uses: readmeio/rdme@c8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8 # v8.x - Pin to specific commit
         with:
           rdme: openapi front/public/swagger.json --version=v1.1 --key=${{ secrets.README_API_KEY }} --id=66cee36af1922700458e4678

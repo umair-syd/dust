@@ -16,8 +16,8 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
         with:
           node-version: 20.13.0
           cache: "npm"
@@ -32,13 +32,13 @@ jobs:
         working-directory: front
         run: npm ci
       - name: Install Redis
-        uses: chenjuneking/redis-setup-action@v1
+        uses: chenjuneking/redis-setup-action@f9b5c8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8 # v1.x - Pin to specific commit
         with:
           version: "7.2.5"
           hostPort: 5434
           containerPort: 6379
       - name: Install Postgres
-        uses: dust-tt/postgresql-action@6730e69fe23f4f2989c19edf9e6e0d7ffeb0a05c
+        uses: dust-tt/postgresql-action@6730e69fe23f4f2989c19edf9e6e0d7ffeb0a05c # Pinned to specific commit
         with:
           postgresql docker image: mirror.gcr.io/postgres
           postgresql version: "14.13"
@@ -55,7 +55,7 @@ jobs:
         run: npx tsx admin/db.ts && npm run test:ci
       - name: Build Tests Report
         if: always()
-        uses: mikepenz/action-junit-report@v5
+        uses: mikepenz/action-junit-report@db71d41eb79864e25ab0337e395c352e84523afe # v5.3.1
         with:
           report_paths: "**/front/junit*.xml"
           detailed_summary: true
@@ -65,8 +65,8 @@ jobs:
   tsc:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
         with:
           node-version: 20.13.0
           cache: "npm"
@@ -86,8 +86,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
         with:
           node-version: 20.13.0
           cache: "npm"
