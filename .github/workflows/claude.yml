@@ -29,6 +29,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Full depth for better git operations
+          persist-credentials: false # Prevent token persistence to protect against prompt injection
 
       # Setup Node.js for JS/TS projects
       - name: Setup Node.js
