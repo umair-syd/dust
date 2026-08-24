@@ -38,7 +38,7 @@ runs:
       run: |
         is_blocked() {
             local raw_component="$1"
-            local component=$(printf '%s' "$raw_component" | sed 's/[][\.*^$/]/\\&/g')
+            local component=$(printf '%s' "$raw_component" | sed 's/[][\\.*^$/]/\\\\&/g')
 
             local status_string="$2"
             
