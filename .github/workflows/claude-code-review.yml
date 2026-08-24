@@ -12,6 +12,8 @@ permissions:
 
 jobs:
   code-review:
+    # Only run on non-fork repositories
+    if: github.event.repository.fork == false
     runs-on: ubuntu-latest
     steps:
       # Determine if we should run the review
@@ -22,9 +24,24 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           result-encoding: string
           script: |
+            // Check if the label was added and is the correct label
             if (context.payload.action === 'labeled' && context.payload.label.name === 'claude-review-requested') {
-              console.log('Running because review was requested');
-              return 'true';
+              // Check if the sender has appropriate permissions
+              const sender = context.payload.sender.login;
+              const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                username: sender
+              });
+              
+              const allowedPermissions = ['admin', 'write', 'maintain'];
+              if (allowedPermissions.includes(permission.permission)) {
+                console.log(`Running because review was requested by authorized user ${sender} with ${permission.permission} permission`);
+                return 'true';
+              } else {
+                console.log(`Skipping because user ${sender} has insufficient permissions (${permission.permission})`);
+                return 'false';
+              }
             }
 
             // Default to not running.
