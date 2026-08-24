@@ -25,11 +25,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
         with:
           node-version: 20.13.0
           cache: "npm"
@@ -48,20 +48,20 @@ jobs:
     steps:
       - name: Generate GitHub App token
         id: app-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@b8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8 # v2.x - Pin to specific commit
         with:
           app-id: ${{ secrets.SPARKLE_RELEASE_BOT_APP_ID }}
           private-key: ${{ secrets.SPARKLE_RELEASE_BOT_PRIVATE_KEY }}
 
       - name: Checkout main branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         with:
           ref: main
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
           persist-credentials: true
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
         with:
           node-version: 20.13.0
           registry-url: "https://registry.npmjs.org"
