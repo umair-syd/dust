@@ -35,7 +35,10 @@ jobs:
     if: |
       needs.check-changes.outputs.file_changed == 'true'
     steps:
+      # Check out the base branch (main) to use trusted code for validation
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.base_ref }}
 
       - name: Setup validation environment
         uses: actions/setup-node@v3
@@ -47,6 +50,23 @@ jobs:
       - name: Build sdks/js
         working-directory: sdks/js
         run: npm install && npm run build
+
+      # Fetch the PR's registry file to validate it
+      - name: Fetch PR registry file
+        run: |
+          set -eo pipefail
+          mkdir -p /tmp/pr-files
+          gh api \
+            -H "Accept: application/vnd.github.raw" \
+            "/repos/${{ github.repository }}/contents/front/lib/registry.ts?ref=${{ github.event.pull_request.head.sha }}" \
+            > /tmp/pr-files/registry.ts
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # Replace the base registry file with the PR version for validation
+      - name: Replace registry file with PR version
+        run: |
+          cp /tmp/pr-files/registry.ts front/lib/registry.ts
 
       - name: Run validation
         id: validate
