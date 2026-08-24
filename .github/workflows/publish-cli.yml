@@ -25,7 +25,16 @@ jobs:
           cache-dependency-path: ./cli/package-lock.json
           registry-url: "https://registry.npmjs.org"
 
-      - working-directory: cli
-        run: npm ci && npm run build:prod && npm publish --access public
+      - name: Install dependencies
+        working-directory: cli
+        run: npm ci
+
+      - name: Build
+        working-directory: cli
+        run: npm run build:prod
+
+      - name: Publish to npm
+        working-directory: cli
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

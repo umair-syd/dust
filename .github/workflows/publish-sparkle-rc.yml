@@ -70,10 +70,18 @@ jobs:
           # Update package.json version without creating a git tag
           npm version $RC_VERSION --no-git-tag-version
 
+      - name: Install dependencies
+        working-directory: sparkle
+        run: npm ci
+
+      - name: Build
+        working-directory: sparkle
+        run: npm run build
+
       - name: Publish RC
         working-directory: sparkle
         run: |
-          npm ci && npm run build && npm publish --tag rc
+          npm publish --tag rc
           RC_VERSION=$(node -p "require('./package.json').version")
           echo "🚀 Successfully published Sparkle RC: $RC_VERSION"
         env:
