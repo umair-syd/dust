@@ -151,6 +151,7 @@ const CliChat: FC<CliChatProps> = ({
           agentName: event.metadata.agentName,
           mcpServerName: event.metadata.mcpServerName,
           toolName: event.metadata.toolName,
+          inputs: event.inputs,
         });
 
         if (cachedApproval !== null) {
@@ -186,6 +187,7 @@ const CliChat: FC<CliChatProps> = ({
             agentName: pendingApproval.metadata.agentName,
             mcpServerName: pendingApproval.metadata.mcpServerName,
             toolName: pendingApproval.metadata.toolName,
+            inputs: pendingApproval.inputs,
           });
         }
 
