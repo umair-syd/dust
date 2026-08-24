@@ -7,6 +7,7 @@ import {
 } from "@dust-tt/client";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import crypto from "crypto";
 import type { Request, Response } from "express";
 import express from "express";
 import http from "http";
@@ -59,6 +60,9 @@ export async function startMcpServer(
 
   const user = meRes.value;
 
+  // Generate a server-wide authentication token
+  const serverAuthToken = crypto.randomBytes(32).toString("hex");
+
   const app = express();
 
   const activeSessions = new Map<
@@ -66,8 +70,27 @@ export async function startMcpServer(
     { server: McpServer; transport: SSEServerTransport }
   >();
 
+  // Authentication middleware for all endpoints
+  const authenticateRequest = (req: Request, res: Response, next: () => void) => {
+    const providedToken = req.headers["x-dust-auth-token"] as string;
+    
+    if (!providedToken) {
+      res.status(401).send("Missing authentication token");
+      return;
+    }
+
+    // Use constant-time comparison to prevent timing attacks
+    if (!crypto.timingSafeEqual(Buffer.from(providedToken), Buffer.from(serverAuthToken))) {
+      console.error(`[Auth] Authentication failed from ${req.ip}`);
+      res.status(403).send("Invalid authentication token");
+      return;
+    }
+
+    next();
+  };
+
   // SSE endpoint
-  app.get("/sse", async (req: Request, res: Response) => {
+  app.get("/sse", authenticateRequest, async (req: Request, res: Response) => {
     console.error(
       `[SSE] Connection request from ${req.ip} for ${req.originalUrl}`
     );
@@ -225,7 +248,7 @@ export async function startMcpServer(
   });
 
   // Message handling endpoint
-  app.post("/message", async (req: Request, res: Response) => {
+  app.post("/message", authenticateRequest, async (req: Request, res: Response) => {
     const sessionId = req.query.sessionId as string;
 
     try {
@@ -275,7 +298,7 @@ export async function startMcpServer(
         }
       });
 
-      httpServer.listen(port, () => {
+      httpServer.listen(port, "127.0.0.1", () => {
         const address = httpServer.address();
         const boundPort = typeof address === "string" ? 0 : address?.port ?? 0;
         resolve(boundPort);
@@ -286,7 +309,9 @@ export async function startMcpServer(
   try {
     const port = await startHttpServer();
     const url = `http://localhost:${port}/sse`;
-    console.error(`HTTP server listening on port ${port}`);
+    console.error(`HTTP server listening on 127.0.0.1:${port}`);
+    console.error(`Authentication token: ${serverAuthToken}`);
+    console.error(`Include this token in the X-Dust-Auth-Token header for all requests`);
     onServerStart(url);
 
     // Graceful shutdown handler
