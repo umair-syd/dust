@@ -129,9 +129,3 @@ jobs:
             Read
 
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          # SECURITY: The following line with Bash tools is DISABLED and should be DELETED
-          # It contains insecure configuration that allows arbitrary command execution
-          #
-          allowed_tools: '["Bash(git diff --name-only HEAD~1)", "Bash(git diff HEAD~1)", "View", "GlobTool", "GrepTool"]'
-
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}

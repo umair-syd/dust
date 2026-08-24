@@ -18,17 +18,21 @@ jobs:
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
       (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
     runs-on: ubuntu-latest
+    # Restrict permissions to read-only for AI execution context
+    # Write operations are delegated to a separate trusted job
     permissions:
-      contents: write
-      pull-requests: write
-      issues: write
-      id-token: write
+      contents: read
+      pull-requests: read
+      issues: read
+      id-token: none
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Full depth for better git operations
+          # Prevent checkout of untrusted PR content in issue/comment workflows
+          ref: ${{ github.event_name == 'pull_request_review' && github.event.pull_request.base.sha || github.sha }}
 
       # Setup Node.js for JS/TS projects
       - name: Setup Node.js
@@ -53,6 +57,9 @@ jobs:
 
       - name: Run Claude Code
         id: claude
+        # Pin to specific commit SHA instead of mutable @beta tag
+        # TODO: Replace with actual commit SHA when available
+        # uses: anthropics/claude-code-action@<commit-sha>
         uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -66,23 +73,17 @@ jobs:
           # Optional: Trigger when specific user is assigned to an issue
           # assignee_trigger: "claude-bot"
 
-          # Allow Claude to use all available tools
+          # Restrict to read-only tools to prevent direct repository modification
+          # Write operations must be performed by a separate trusted job
           allowed_tools: |
-            Agent,
-            Bash,
-            Edit,
             Glob,
             Grep,
             LS,
-            MultiEdit,
-            NotebookEdit,
             NotebookRead,
             Read,
             TodoRead,
-            TodoWrite,
             WebFetch,
-            WebSearch,
-            Write
+            WebSearch
 
           # Custom instructions based on CLAUDE.md
           custom_instructions: |
