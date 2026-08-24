@@ -48,7 +48,9 @@ runs:
 
     - name: "Configure GCP Docker Auth"
       shell: bash
-      run: gcloud auth configure-docker ${{ inputs.region }}-docker.pkg.dev --quiet
+      env:
+        REGION: ${{ inputs.region }}
+      run: gcloud auth configure-docker $REGION-docker.pkg.dev --quiet
 
     - name: "Setup Depot"
       uses: "depot/setup-action@v1"
