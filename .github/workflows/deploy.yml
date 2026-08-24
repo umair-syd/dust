@@ -51,8 +51,10 @@ jobs:
     steps:
       - name: Check if deployment is from main branch
         if: ${{ github.ref != 'refs/heads/main' && inputs.component != 'front-edge' && inputs.component != 'front-qa' }}
+        env:
+          COMPONENT: ${{ inputs.component }}
         run: |
-          echo "Error: Deployments for ${{ inputs.component }} are only allowed from the main branch"
+          echo "Error: Deployments for $COMPONENT are only allowed from the main branch"
           exit 1
 
   prepare:
@@ -105,11 +107,13 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - id: set-matrix
+        env:
+          REGIONS: ${{ inputs.regions }}
         run: |
-          if [ "${{ inputs.regions }}" = "all" ]; then
+          if [ "$REGIONS" = "all" ]; then
             echo "matrix=[\"us-central1\",\"europe-west1\"]" >> $GITHUB_OUTPUT
           else
-            echo "matrix=[\"${{ inputs.regions }}\"]" >> $GITHUB_OUTPUT
+            echo "matrix=[\"$REGIONS\"]" >> $GITHUB_OUTPUT
           fi
 
   build:
