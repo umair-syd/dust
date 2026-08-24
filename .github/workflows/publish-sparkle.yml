@@ -86,8 +86,16 @@ jobs:
         run: |
           git push origin main
 
+      - name: Install dependencies
+        working-directory: sparkle
+        run: npm ci
+
+      - name: Build
+        working-directory: sparkle
+        run: npm run build
+
       - name: Publish
         working-directory: sparkle
-        run: npm ci && npm run build && npm publish
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

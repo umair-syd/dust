@@ -25,7 +25,16 @@ jobs:
           cache-dependency-path: ./sdks/js/package-lock.json
           registry-url: "https://registry.npmjs.org"
 
-      - working-directory: sdks/js
-        run: npm ci && npm run build && npm publish
+      - name: Install dependencies
+        working-directory: sdks/js
+        run: npm ci
+
+      - name: Build
+        working-directory: sdks/js
+        run: npm run build
+
+      - name: Publish to npm
+        working-directory: sdks/js
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
