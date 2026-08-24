@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check if deployment is from main branch
-        if: ${{ github.ref != 'refs/heads/main' && inputs.component != 'front-edge' && inputs.component != 'front-qa' }}
+        if: ${{ github.ref != 'refs/heads/main' }}
         run: |
           echo "Error: Deployments for ${{ inputs.component }} are only allowed from the main branch"
           exit 1

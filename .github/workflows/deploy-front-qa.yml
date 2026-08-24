@@ -15,7 +15,17 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  check-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if deployment is from main branch
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          echo "Error: Front QA deployments are only allowed from the main branch"
+          exit 1
+
   prepare:
+    needs: [check-branch]
     runs-on: ubuntu-latest
     outputs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
